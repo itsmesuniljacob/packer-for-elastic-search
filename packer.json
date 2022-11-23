@@ -1,0 +1,48 @@
+{
+    "variables": {
+        "gcp_project_id": "",
+        "account_file": "{{ env `GOOGLE_APPLICATION_CREDENTIALS` }}",
+        "gcp_network": "default",
+        "gcp_subnetwork": "default",
+        "gcp_disk_size": "50",
+        "gcp_machine_type": "e2-medium",
+        "gcp_region": "asia-south1",
+        "gcp_disk_type": "pd-ssd",
+        "gcp_zone": "asia-south1-a",
+        "commit_id": "{{ env `SHA` }}"
+    
+    },
+  
+   "builders": [
+       {
+           "type": "googlecompute",
+           "account_file": "{{ user `account_file` }}",
+           "project_id": "{{user `gcp_project_id`}}",
+           "source_image_family": "centos-7",
+           "disk_size": "{{user `gcp_disk_size`}}",
+           "disk_type": "{{user `gcp_disk_type`}}",
+           "machine_type": "{{user `gcp_machine_type`}}",
+           "zone": "{{user `gcp_zone`}}",
+           "region": "{{user `gcp_region`}}",
+           "image_name": "centos7-elasticsearch-{{user `commit_id`}}",
+           "image_description": "Created for deploying Elastic Search",
+           "instance_name": "packer-builder-elasticsearch-{{user `commit_id`}}",
+           "network": "{{user `gcp_network`}}",
+           "subnetwork": "{{user `gcp_subnetwork`}}",
+           "ssh_username": "packer",
+           "tags": "packer"
+     
+  
+       }
+   ],
+   "provisioners": [
+       {
+           "type": "shell",
+           "execute_command": "echo 'packer'| sudo -S -E sh -eux '{{.Path}}'",
+           "scripts": [
+             "bootstrap.sh"
+           ]
+       }
+   ]
+  
+  }
